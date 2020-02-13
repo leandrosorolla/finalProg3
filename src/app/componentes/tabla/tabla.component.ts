@@ -12,8 +12,8 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./tabla.component.css']
 })
 export class TablaComponent implements OnInit {
-  @ViewChild('btnClose', {static: false}) btnClose: ElementRef;
-  personas: Persona [] = [];
+  @ViewChild('btnClose', { static: false }) btnClose: ElementRef;
+  personas: Persona[] = [];
   persona: Persona = {
     id: 0,
     nombre: '',
@@ -23,29 +23,33 @@ export class TablaComponent implements OnInit {
   public formGroup: FormGroup;
 
   // tslint:disable-next-line: max-line-length
-  constructor(private servicio: DataApiService, private router: Router, private rutaActiva: ActivatedRoute, private formBuilder: FormBuilder ) {}
+  constructor(private servicio: DataApiService, private router: Router, private rutaActiva: ActivatedRoute, private formBuilder: FormBuilder) { }
 
 
 
-    public ngOnInit() {
-      this.getAll();
-      this.buildForm();
-    }
-    public buildForm() {
-      this.formGroup = this.formBuilder.group({
-        id: this.persona.id,
-        nombre: this.persona.nombre,
-        apellido: this.persona.apellido,
-        dni: this.persona.dni,
-      });
-    }
+  public ngOnInit() {
+    this.getAll();
+    this.buildForm();
+  }
+  public buildForm() {
+    this.formGroup = this.formBuilder.group({
+      id: this.persona.id,
+      nombre: this.persona.nombre,
+      apellido: this.persona.apellido,
+      dni: this.persona.dni,
+    });
+  }
 
 
   getAll() {
     this.servicio.getAll().subscribe(data => {
       this.personas = data;
       console.log(this.personas);
-    });
+    },
+      err => console.log('HTTP Error', err),
+      () => console.log('HTTP request completed.')
+
+    );
   }
 
   delete(id: number, cont: number) {
@@ -56,9 +60,11 @@ export class TablaComponent implements OnInit {
         alert('Registro Eliminado');
         this.buildForm();
         this.personas.splice(cont, 1);
-         // .reload();
-      //  this.refresh();
-      });
+
+      },
+        err => console.log('HTTP Error', err),
+        () => console.log('HTTP request completed.')
+      );
     }
   }
   // Agregar
@@ -68,24 +74,27 @@ export class TablaComponent implements OnInit {
       this.persona = data;
       console.log(data);
       this.personas.push(this.persona);
-    });
+    },
+      err => console.log('HTTP Error', err),
+      () => console.log('HTTP request completed.')
+    );
 
   }
   // ACTUALIZAR
-actualizar(persona: Persona) {
-  this.persona = persona;
-  this.buildForm();
-}
-add() {
- let persona: Persona = {
-    id: 0,
-    nombre: '',
-    apellido: '',
-    dni: 0,
-  };
- this.persona = persona;
- this.buildForm();
-}
+  actualizar(persona: Persona) {
+    this.persona = persona;
+    this.buildForm();
+  }
+  add() {
+    const persona: Persona = {
+      id: 0,
+      nombre: '',
+      apellido: '',
+      dni: 0,
+    };
+    this.persona = persona;
+    this.buildForm();
+  }
   update(persona: Persona) {
     const idPersona = persona.id;
     this.servicio.put(idPersona, persona).subscribe(data => {
@@ -94,29 +103,33 @@ add() {
       const nombre = this.persona.nombre;
       const apellido = this.persona.apellido;
       const dni = this.persona.dni;
-      this.personas.map(function(dato){
-        if (dato.id === id){
-          dato.nombre=nombre;
-          dato.apellido=apellido;
-          dato.dni=dni;
+      // tslint:disable-next-line: only-arrow-functions
+      this.personas.map(function (dato) {
+        if (dato.id === id) {
+          dato.nombre = nombre;
+          dato.apellido = apellido;
+          dato.dni = dni;
 
         }
       });
 
-    });
+    },
+      err => console.log('HTTP Error', err),
+      () => console.log('HTTP request completed.')
+    );
 
   }
 
   save(formGroup: FormGroup, cont: number) {
 
-      if (formGroup.value.id === 0) {
-        this.agregar(formGroup.value);
-      } else {
-        this.update(formGroup.value);
+    if (formGroup.value.id === 0) {
+      this.agregar(formGroup.value);
+    } else {
+      this.update(formGroup.value);
 
-      }
-      formGroup.reset();
-      this.btnClose.nativeElement.click();
+    }
+    formGroup.reset();
+    this.btnClose.nativeElement.click();
   }
 
 
