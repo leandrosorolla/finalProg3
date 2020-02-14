@@ -1,4 +1,4 @@
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { DataApiService } from './../../service/data-api.service';
 import { Persona } from './../../entidad/persona';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
@@ -33,10 +33,10 @@ export class TablaComponent implements OnInit {
   }
   public buildForm() {
     this.formGroup = this.formBuilder.group({
-      id: this.persona.id,
-      nombre: this.persona.nombre,
-      apellido: this.persona.apellido,
-      dni: this.persona.dni,
+      id: [this.persona.id,Validators.required],
+      nombre: [this.persona.nombre, Validators.required],
+      apellido:[ this.persona.apellido,Validators.required],
+      dni: [this.persona.dni,Validators.required]
     });
   }
 
